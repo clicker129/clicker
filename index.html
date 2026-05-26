@@ -170,7 +170,7 @@ border-radius:20px;
 
 <script>
 
-const ownerId = 7942212896;
+const ownerId = 123456789;
 
 let owners = [ownerId];
 
@@ -203,7 +203,34 @@ function add(){
 
 function profile(){
 
-    alert("👤 Ваш баланс: " + score);
+    let role = "Игрок";
+
+    if(owners.includes(currentUserId)){
+        role = "👑 Owner";
+    }
+    else if(chiefAdmins.includes(currentUserId)){
+        role = "🛡️ Главный Админ";
+    }
+    else if(admins.includes(currentUserId)){
+        role = "⚔️ Админ";
+    }
+    else if(moderators.includes(currentUserId)){
+        role = "🔧 Модератор";
+    }
+
+    alert(
+        "👤 Профиль игрока\n\n" +
+
+        "🆔 ID: " + currentUserId + "\n" +
+
+        "💰 Баланс: " + score + "\n" +
+
+        "🏆 Роль: " + role + "\n" +
+
+        "⚡ Уровень: " + Math.floor(score / 100) + "\n" +
+
+        "📅 Аккаунт активен"
+    );
 }
 
 function shop(){
@@ -233,30 +260,3 @@ function adminPanel(){
         role = "🔧 Модератор";
     }
     else{
-        alert("❌ Нет доступа");
-        return;
-    }
-
-    document.getElementById("adminBox").style.display = "block";
-
-    document.getElementById("roleText").innerText =
-    "Роль: " + role;
-
-    document.getElementById("adminBalance").innerText =
-    "💰 Баланс: " + score;
-}
-
-function closeAdmin(){
-
-    document.getElementById("adminBox").style.display = "none";
-}
-
-function giveCoins(){
-
-    score += 100;
-
-    document.getElementById("score").innerText = score;
-
-    localStorage.setItem("score", score);
-
-    document.getElementById("adminBalance").innerText =

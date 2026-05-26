@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Clicker</title>
+</head>
+<body style="text-align:center;font-family:Arial;margin-top:100px;">
+
+<h1>Кликер</h1>
+
+<h2 id="score">0</h2>
+
+<button onclick="add()" style="font-size:30px;padding:20px 40px;">
+КЛИК
+</button>
+
+<script>
+let score = 0;
+function add() {
+    score++;
+    document.getElementById("score").innerText = score;
+}
+</script>
+
+</body>
+</html>

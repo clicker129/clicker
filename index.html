@@ -2,47 +2,89 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Clicker Game</title>
+<title>Clicker</title>
 </head>
 
-<body style="text-align:center;font-family:Arial;margin-top:80px;">
+<body style="
+text-align:center;
+font-family:Arial;
+background: linear-gradient(135deg, #1e3c72, #2a5298);
+height:100vh;
+margin:0;
+padding-top:80px;
+color:white;
+">
 
-<h1>🎮 Кликер</h1>
+<h1 style="font-size:50px;">
+💰 Кликер
+</h1>
 
-<h2 id="score">0</h2>
+<h2 id="score" style="font-size:40px;">
+0
+</h2>
 
-<button onclick="clicker()" style="font-size:25px;padding:15px 30px;">
+<button onclick="add()" style="
+font-size:30px;
+padding:20px 40px;
+border:none;
+border-radius:20px;
+background:#ffcc00;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+">
 💰 КЛИК
 </button>
 
 <br><br>
 
-<button onclick="resetGame()" style="font-size:18px;padding:10px 20px;">
-🔄 Сброс
+<button onclick="profile()" style="
+padding:10px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin:5px;
+">
+👤 Профиль
+</button>
+
+<button onclick="shop()" style="
+padding:10px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin:5px;
+">
+🛒 Магазин
 </button>
 
 <script>
+
 let score = localStorage.getItem("score");
 
-if (score === null) {
+if(score === null){
     score = 0;
-} else {
+}else{
     score = parseInt(score);
 }
 
 document.getElementById("score").innerText = score;
 
-function clicker(){
+function add() {
     score++;
+
     document.getElementById("score").innerText = score;
+
     localStorage.setItem("score", score);
 }
 
-function resetGame(){
-    score = 0;
-    document.getElementById("score").innerText = score;
-    localStorage.setItem("score", score);
+function profile(){
+    alert("👤 Ваш баланс: " + score);
 }
+
+function shop(){
+    alert("🛒 Магазин скоро будет");
+}
+
 </script>
 
 </body>

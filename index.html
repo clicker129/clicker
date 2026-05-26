@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clicker RP</title>
+<title>Clicker RP PRO</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -17,7 +17,7 @@ display:flex;
 justify-content:center;
 align-items:center;
 font-family:Arial;
-background:url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+background:url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
 background-size:cover;
 overflow:hidden;
 ">
@@ -33,18 +33,20 @@ max-width:450px;
 box-sizing:border-box;
 ">
 
-<h1 style="font-size:clamp(28px,6vw,50px);">💰 Clicker RP</h1>
+<h1 style="font-size:clamp(28px,6vw,48px);">💰 Clicker RP PRO</h1>
 
-<h2 id="score" style="font-size:clamp(30px,7vw,45px);">0</h2>
+<h2 id="score">0</h2>
+<h3 id="level">Level: 1</h3>
 
-<button onclick="add()" style="
-font-size:clamp(18px,5vw,28px);
-padding:15px 30px;
+<button onclick="clicker()" style="
+font-size:28px;
+padding:18px 40px;
+width:100%;
 border:none;
 border-radius:15px;
 background:#ffcc00;
-cursor:pointer;
 font-weight:bold;
+cursor:pointer;
 ">
 💰 КЛИК
 </button>
@@ -52,19 +54,20 @@ font-weight:bold;
 <br><br>
 
 <button onclick="profile()">👤 Профиль</button>
+<button onclick="openShop()">🛒 Магазин</button>
+<button onclick="openAdmin()" id="adminBtn" style="display:none;background:red;color:white;">⚙️ Админ</button>
 
-<button onclick="openAdmin()" id="adminBtn" style="display:none;background:red;color:white;">
-⚙️ Админ
-</button>
+<!-- SHOP -->
+<div id="shop" style="display:none;margin-top:15px;background:#222;padding:15px;border-radius:15px;">
+<h3>🛒 Магазин</h3>
 
-<div id="adminPanel" style="
-display:none;
-margin-top:20px;
-background:#222;
-padding:15px;
-border-radius:15px;
-">
+<button onclick="buyBoost()">⚡ +1 за клик (100)</button>
+<button onclick="buyLevel()">⭐ +1 уровень (200)</button>
 
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel" style="display:none;margin-top:15px;background:#222;padding:15px;border-radius:15px;">
 <h3>⚙️ Админ панель</h3>
 
 <input id="targetId" placeholder="ID игрока" style="padding:8px;width:90%;"><br><br>
@@ -72,7 +75,7 @@ border-radius:15px;
 
 <button onclick="giveCoins()">➕ Выдать</button>
 <button onclick="takeCoins()">➖ Забрать</button>
-
+<button onclick="giveAdmin()">⚔️ Админка</button>
 </div>
 
 </div>
@@ -97,67 +100,66 @@ const db = firebase.database();
 const ownerId = "7942212896";
 let currentUserId = "7942212896";
 
-// ================= BALANCE =================
+// ================= DATA =================
 let score = 0;
+let level = 1;
+let power = 1;
 
-// загрузка игрока
+// ================= LOAD =================
 db.ref("players/" + currentUserId).on("value", snap => {
-    let data = snap.val();
+    let data = snap.val() || {balance:0, level:1, power:1};
 
-    if(data){
-        score = data.balance || 0;
-    } else {
-        db.ref("players/" + currentUserId).set({balance:0});
-    }
+    score = data.balance;
+    level = data.level;
+    power = data.power;
 
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = "💰 " + score;
+    document.getElementById("level").innerText = "Level: " + level;
 });
 
 // ================= CLICK =================
-function add(){
-    score++;
-    db.ref("players/" + currentUserId).set({balance: score});
+function clicker(){
+    score += power;
+
+    db.ref("players/" + currentUserId).set({
+        balance: score,
+        level: level,
+        power: power
+    });
 }
 
 // ================= PROFILE =================
 function profile(){
-    alert("🆔 ID: " + currentUserId + "\n💰 Баланс: " + score);
+    alert("ID: " + currentUserId +
+          "\nБаланс: " + score +
+          "\nLevel: " + level +
+          "\nСила клика: " + power);
 }
 
-// ================= ADMIN =================
-if(currentUserId === ownerId){
-    document.getElementById("adminBtn").style.display = "inline-block";
+// ================= SHOP =================
+function openShop(){
+    let s = document.getElementById("shop");
+    s.style.display = s.style.display === "none" ? "block" : "none";
 }
 
-function openAdmin(){
-    document.getElementById("adminPanel").style.display = "block";
+function buyBoost(){
+    if(score >= 100){
+        score -= 100;
+        power += 1;
+        save();
+    }
 }
 
-// ================= GIVE / TAKE =================
-function giveCoins(){
-    let id = document.getElementById("targetId").value;
-    let amount = Number(document.getElementById("amount").value);
-
-    db.ref("players/" + id).once("value", snap => {
-        let data = snap.val() || {balance:0};
-        data.balance += amount;
-        db.ref("players/" + id).set(data);
-    });
+function buyLevel(){
+    if(score >= 200){
+        score -= 200;
+        level += 1;
+        save();
+    }
 }
 
-function takeCoins(){
-    let id = document.getElementById("targetId").value;
-    let amount = Number(document.getElementById("amount").value);
-
-    db.ref("players/" + id).once("value", snap => {
-        let data = snap.val() || {balance:0};
-        data.balance -= amount;
-        if(data.balance < 0) data.balance = 0;
-        db.ref("players/" + id).set(data);
-    });
-}
-
-</script>
-
-</body>
-</html>
+function save(){
+    db.ref("players/" + currentUserId).set({
+        balance: score,
+        level: level,
+        power: power

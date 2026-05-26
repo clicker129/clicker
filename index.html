@@ -1,41 +1,79 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clicker Online</title>
+<title>Clicker RP</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 
-<body style="font-family:Arial;background:#111;color:white;text-align:center;padding-top:50px;">
+<body style="
+margin:0;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Arial;
+background:url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+background-size:cover;
+overflow:hidden;
+">
 
-<h1>💰 Online Clicker RP</h1>
+<div style="
+background:rgba(0,0,0,0.65);
+padding:25px;
+border-radius:20px;
+text-align:center;
+color:white;
+width:90%;
+max-width:450px;
+box-sizing:border-box;
+">
 
-<h2 id="score">0</h2>
+<h1 style="font-size:clamp(28px,6vw,50px);">💰 Clicker RP</h1>
 
-<button onclick="add()">💰 Клик</button>
-<button onclick="profile()">👤 Профиль</button>
+<h2 id="score" style="font-size:clamp(30px,7vw,45px);">0</h2>
+
+<button onclick="add()" style="
+font-size:clamp(18px,5vw,28px);
+padding:15px 30px;
+border:none;
+border-radius:15px;
+background:#ffcc00;
+cursor:pointer;
+font-weight:bold;
+">
+💰 КЛИК
+</button>
 
 <br><br>
 
-<button id="adminBtn" onclick="openAdmin()" style="display:none;background:red;color:white;">⚙️ Admin</button>
+<button onclick="profile()">👤 Профиль</button>
 
-<div id="adminPanel" style="display:none;margin-top:20px;background:#222;padding:20px;border-radius:10px;">
+<button onclick="openAdmin()" id="adminBtn" style="display:none;background:red;color:white;">
+⚙️ Админ
+</button>
 
-<h3>Админ панель</h3>
+<div id="adminPanel" style="
+display:none;
+margin-top:20px;
+background:#222;
+padding:15px;
+border-radius:15px;
+">
 
-<input id="targetId" placeholder="ID игрока"><br><br>
-<input id="amount" placeholder="Монеты"><br><br>
+<h3>⚙️ Админ панель</h3>
+
+<input id="targetId" placeholder="ID игрока" style="padding:8px;width:90%;"><br><br>
+<input id="amount" placeholder="Монеты" style="padding:8px;width:90%;"><br><br>
 
 <button onclick="giveCoins()">➕ Выдать</button>
 <button onclick="takeCoins()">➖ Забрать</button>
 
-<br><br>
-
-<button onclick="giveAdmin()">⚔️ Админ</button>
-<button onclick="giveMod()">🔧 Модер</button>
+</div>
 
 </div>
 
@@ -59,9 +97,10 @@ const db = firebase.database();
 const ownerId = "7942212896";
 let currentUserId = "7942212896";
 
-// ================= PLAYER =================
+// ================= BALANCE =================
 let score = 0;
 
+// загрузка игрока
 db.ref("players/" + currentUserId).on("value", snap => {
     let data = snap.val();
 
@@ -77,28 +116,24 @@ db.ref("players/" + currentUserId).on("value", snap => {
 // ================= CLICK =================
 function add(){
     score++;
-
-    db.ref("players/" + currentUserId).set({
-        balance: score
-    });
+    db.ref("players/" + currentUserId).set({balance: score});
 }
 
 // ================= PROFILE =================
 function profile(){
-    alert("ID: " + currentUserId + "\nБаланс: " + score);
+    alert("🆔 ID: " + currentUserId + "\n💰 Баланс: " + score);
 }
 
-// ================= ADMIN CHECK =================
+// ================= ADMIN =================
 if(currentUserId === ownerId){
     document.getElementById("adminBtn").style.display = "inline-block";
 }
 
-// ================= ADMIN PANEL =================
 function openAdmin(){
     document.getElementById("adminPanel").style.display = "block";
 }
 
-// ================= GIVE COINS =================
+// ================= GIVE / TAKE =================
 function giveCoins(){
     let id = document.getElementById("targetId").value;
     let amount = Number(document.getElementById("amount").value);
@@ -110,7 +145,6 @@ function giveCoins(){
     });
 }
 
-// ================= TAKE COINS =================
 function takeCoins(){
     let id = document.getElementById("targetId").value;
     let amount = Number(document.getElementById("amount").value);
@@ -121,19 +155,6 @@ function takeCoins(){
         if(data.balance < 0) data.balance = 0;
         db.ref("players/" + id).set(data);
     });
-}
-
-// ================= ROLES =================
-function giveAdmin(){
-    let id = document.getElementById("targetId").value;
-    db.ref("admins/" + id).set(true);
-    alert("Админ выдан");
-}
-
-function giveMod(){
-    let id = document.getElementById("targetId").value;
-    db.ref("mods/" + id).set(true);
-    alert("Модер выдан");
 }
 
 </script>

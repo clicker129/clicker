@@ -3,8 +3,9 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Кликер</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ultimate Clicker</title>
 </head>
 
 <body style="
@@ -19,14 +20,13 @@ overflow:hidden;
 ">
 
 <div style="
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.65);
 padding:30px;
 border-radius:25px;
 text-align:center;
 color:white;
 width:90%;
-max-width:450px;
-min-width:280px;
+max-width:500px;
 box-shadow:0 10px 30px rgba(0,0,0,0.5);
 ">
 
@@ -38,21 +38,21 @@ margin-bottom:10px;
 </h1>
 
 <h2 id="score" style="
-font-size:clamp(30px, 7vw, 45px);
+font-size:45px;
 margin-top:0;
 ">
 0
 </h2>
 
 <button onclick="add()" style="
-font-size:clamp(20px, 5vw, 30px);
+font-size:30px;
 padding:20px 40px;
 border:none;
 border-radius:20px;
 background:#ffcc00;
 cursor:pointer;
-box-shadow:0 5px 15px rgba(0,0,0,0.4);
 margin-bottom:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
 ">
 💰 КЛИК
 </button>
@@ -65,7 +65,6 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 margin:5px;
-font-size:16px;
 ">
 👤 Профиль
 </button>
@@ -76,7 +75,6 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 margin:5px;
-font-size:16px;
 ">
 🛒 Магазин
 </button>
@@ -87,7 +85,6 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 margin:5px;
-font-size:16px;
 ">
 🏆 Топ
 </button>
@@ -98,7 +95,6 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 margin:5px;
-font-size:16px;
 background:red;
 color:white;
 display:none;
@@ -109,7 +105,7 @@ display:none;
 <div id="adminBox" style="
 display:none;
 margin-top:20px;
-background:rgba(0,0,0,0.7);
+background:rgba(0,0,0,0.8);
 padding:20px;
 border-radius:20px;
 ">
@@ -134,16 +130,12 @@ border-radius:20px;
 
 <br><br>
 
-<button onclick="giveChiefAdmin()">
-🛡️ Главный Админ
-</button>
-
 <button onclick="giveAdmin()">
-⚔️ Админ
+⚔️ Выдать Админа
 </button>
 
 <button onclick="giveModerator()">
-🔧 Модератор
+🔧 Выдать Модератора
 </button>
 
 <br><br>
@@ -155,7 +147,21 @@ border-radius:20px;
 <br><br>
 
 <button onclick="showAdmins()">
-📋 Список администрации
+📋 Администрация
+</button>
+
+<button onclick="showUsers()">
+👥 Пользователи
+</button>
+
+<br><br>
+
+<button onclick="resetBalance()">
+🗑 Сбросить баланс
+</button>
+
+<button onclick="addLevel()">
+⭐ +1 Уровень
 </button>
 
 <br><br>
@@ -170,21 +176,27 @@ border-radius:20px;
 
 <script>
 
-const ownerId = 123456789;
+let ownerId = 7942212896;
 
-let owners = [ownerId];
+let currentUserId = 7942212896;
 
-let chiefAdmins = [];
-
-let admins = [];
+let admins = [1];
 
 let moderators = [];
 
-let currentUserId = ownerId;
+let users = [];
+
+let level = localStorage.getItem("level");
+
+if(level == null){
+    level = 1;
+}else{
+    level = parseInt(level);
+}
 
 let score = localStorage.getItem("score");
 
-if(score === null){
+if(score == null){
     score = 0;
 }else{
     score = parseInt(score);
@@ -192,9 +204,15 @@ if(score === null){
 
 document.getElementById("score").innerText = score;
 
+users.push({
+    id: currentUserId,
+    balance: score,
+    level: level,
+    role: "👑 Owner"
+});
+
 if(
-    owners.includes(currentUserId) ||
-    chiefAdmins.includes(currentUserId) ||
+    currentUserId == ownerId ||
     admins.includes(currentUserId) ||
     moderators.includes(currentUserId)
 ){
@@ -208,17 +226,16 @@ function add(){
     document.getElementById("score").innerText = score;
 
     localStorage.setItem("score", score);
+
+    users[0].balance = score;
 }
 
 function profile(){
 
-    let role = "Игрок";
+    let role = "👤 Игрок";
 
-    if(owners.includes(currentUserId)){
+    if(currentUserId == ownerId){
         role = "👑 Owner";
-    }
-    else if(chiefAdmins.includes(currentUserId)){
-        role = "🛡️ Главный Админ";
     }
     else if(admins.includes(currentUserId)){
         role = "⚔️ Админ";
@@ -228,29 +245,28 @@ function profile(){
     }
 
     alert(
-        "👤 Профиль игрока\n\n" +
+        "👤 ПРОФИЛЬ\n\n" +
         "🆔 ID: " + currentUserId + "\n" +
         "💰 Баланс: " + score + "\n" +
-        "🏆 Роль: " + role + "\n" +
-        "⚡ Уровень: " + Math.floor(score / 100)
+        "⭐ Уровень: " + level + "\n" +
+        "🏆 Роль: " + role
     );
 }
 
 function shop(){
 
-    alert("🛒 Магазин скоро будет");
+    alert(
+        "🛒 МАГАЗИН\n\n" +
+        "Скоро появятся:\n" +
+        "⚡ Бустеры\n" +
+        "💎 VIP\n" +
+        "🚀 Авто-клик"
+    );
 }
 
 function topPlayers(){
 
-    alert("🏆 Топ игроков скоро будет");
-}
-
-function adminPanel(){
-
-    let role = "Игрок";
-
-    if(owners.includes(currentUserId)){
-        role = "👑 Owner";
-    }
-    else if(chiefAdmins.
+    alert(
+        "🏆 ТОП ИГРОКОВ\n\n" +
+        "1. Owner — " + score + "💰"
+    );

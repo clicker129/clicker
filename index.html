@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clicker RP PRO</title>
+<title>Clicker RP NEON FULL</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -12,7 +12,7 @@
 body{
 margin:0;
 font-family:Arial;
-background:url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+background:url('https://images.unsplash.com/photo-1533134486753-c833f0ed4866?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
 height:100vh;
 display:flex;
 justify-content:center;
@@ -21,37 +21,58 @@ align-items:center;
 
 .main{
 background:rgba(0,0,0,0.75);
+backdrop-filter: blur(10px);
 padding:25px;
 border-radius:20px;
 text-align:center;
 color:white;
-width:90%;
-max-width:450px;
-box-sizing:border-box;
+width:92%;
+max-width:550px;
+box-shadow:0 0 30px rgba(0,255,255,0.2);
 }
 
-.click-btn{
-font-size:26px;
-padding:15px;
-border:none;
-border-radius:15px;
-background:#ffcc00;
-cursor:pointer;
-width:100%;
-}
+h1{color:white;text-shadow:0 0 10px cyan;}
+h2{color:#00ffd5;text-shadow:0 0 10px #00ffd5;}
+h3{color:#ccc;}
 
-.btn{
+button{
+margin:6px;
 padding:10px 15px;
-margin:5px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
+font-weight:bold;
+transition:0.2s;
+}
+
+button:hover{transform:scale(1.05);}
+
+.click{
+font-size:30px;
+width:100%;
+padding:18px;
+background:linear-gradient(45deg,#00ffd5,#0077ff);
+color:black;
+box-shadow:0 0 20px rgba(0,255,255,0.5);
+}
+
+.btn{background:#222;color:white;}
+.btn:hover{background:#333;}
+
+.admin{background:#ff2e2e;color:white;}
+.owner{background:#ffb300;color:black;}
+
+.panel{
+background:#111;
+padding:10px;
+border-radius:12px;
+margin-top:10px;
+border:1px solid #00ffd5;
 }
 
 @media(min-width:900px){
-.main{max-width:700px;padding:40px;}
-.click-btn{font-size:40px;}
-.btn{font-size:16px;}
+.main{max-width:750px;padding:40px;}
+.click{font-size:45px;}
 }
 </style>
 
@@ -61,36 +82,48 @@ cursor:pointer;
 
 <div class="main">
 
-<h1>💰 Clicker RP</h1>
+<h1>💎 CLICKER RP FULL</h1>
 
 <h2 id="score">0</h2>
 <h3 id="level">Level: 1</h3>
 
-<button class="click-btn" onclick="add()">💰 КЛИК</button>
+<button class="click" onclick="addClick()">💥 КЛИК</button>
 
 <br><br>
 
 <button class="btn" onclick="profile()">👤 Профиль</button>
 <button class="btn" onclick="toggleShop()">🛒 Магазин</button>
-<button class="btn" onclick="openAdmin()" id="adminBtn" style="display:none;background:red;color:white;">⚙️ Админ</button>
+<button class="admin" onclick="openAdmin()" id="adminBtn" style="display:none;">⚙️ Админ</button>
+<button class="owner" onclick="openOwner()" id="ownerBtn" style="display:none;">👑 OWNER</button>
 
 <!-- SHOP -->
-<div id="shop" style="display:none;margin-top:10px;background:#222;padding:10px;border-radius:10px;">
+<div id="shop" class="panel" style="display:none;">
 <h3>🛒 Магазин</h3>
-<button class="btn" onclick="buyPower()">⚡ +1 клик (100)</button>
+<button class="btn" onclick="buyPower()">⚡ +1 сила (100)</button>
 <button class="btn" onclick="buyLevel()">⭐ +1 уровень (200)</button>
 </div>
 
 <!-- ADMIN -->
-<div id="adminPanel" style="display:none;margin-top:10px;background:#222;padding:10px;border-radius:10px;">
+<div id="admin" class="panel" style="display:none;">
 <h3>⚙️ Админ панель</h3>
 
-<input id="targetId" placeholder="ID игрока" style="padding:5px;width:90%;"><br><br>
-<input id="amount" placeholder="Монеты" style="padding:5px;width:90%;"><br><br>
+<input id="id" placeholder="ID игрока" style="width:90%;padding:6px;"><br><br>
+<input id="money" placeholder="Монеты" style="width:90%;padding:6px;"><br><br>
 
 <button class="btn" onclick="giveCoins()">➕ Выдать</button>
 <button class="btn" onclick="takeCoins()">➖ Забрать</button>
-<button class="btn" onclick="giveAdmin()">⚔️ Админка</button>
+<button class="admin" onclick="giveAdmin()">⚔️ Выдать админку</button>
+</div>
+
+<!-- OWNER -->
+<div id="owner" class="panel" style="display:none;">
+<h3>👑 OWNER ПАНЕЛЬ</h3>
+
+<input id="o_id" placeholder="ID игрока" style="width:90%;padding:6px;"><br><br>
+<input id="o_money" placeholder="Монеты" style="width:90%;padding:6px;"><br><br>
+
+<button class="owner" onclick="ownerGiveCoins()">💰 Выдать всем силу</button>
+<button class="owner" onclick="ownerReset()">🧨 Сброс игрока</button>
 </div>
 
 </div>
@@ -111,7 +144,7 @@ appId: "1:610633308170:web:e04a923c4bc6e0e05ca7f3"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// OWNER
+// OWNER ID
 const ownerId = "7942212896";
 let currentUserId = "7942212896";
 
@@ -120,66 +153,16 @@ let score = 0;
 let level = 1;
 let power = 1;
 
-// LOAD
-db.ref("players/" + currentUserId).on("value", snap=>{
+// LOAD PLAYER
+db.ref("players/"+currentUserId).on("value", snap=>{
 let d = snap.val() || {balance:0,level:1,power:1};
 
 score = d.balance;
 level = d.level;
 power = d.power;
 
-document.getElementById("score").innerText = score;
+document.getElementById("score").innerText = "💰 " + score;
 document.getElementById("level").innerText = "Level: " + level;
 });
 
 // CLICK
-function add(){
-score += power;
-save();
-}
-
-// SAVE
-function save(){
-db.ref("players/" + currentUserId).set({
-balance:score,
-level:level,
-power:power
-});
-}
-
-// PROFILE
-function profile(){
-alert("ID: "+currentUserId+"\nБаланс: "+score+"\nLevel: "+level+"\nPower: "+power);
-}
-
-// SHOP
-function toggleShop(){
-let s=document.getElementById("shop");
-s.style.display=s.style.display==="none"?"block":"none";
-}
-
-function buyPower(){
-if(score>=100){score-=100;power++;save();}
-}
-
-function buyLevel(){
-if(score>=200){score-=200;level++;save();}
-}
-
-// ADMIN CHECK
-function checkAdmin(){
-db.ref("admins/"+currentUserId).once("value",snap=>{
-if(currentUserId===ownerId || snap.val()===true){
-document.getElementById("adminBtn").style.display="inline-block";
-}
-});
-}
-checkAdmin();
-
-// ADMIN PANEL
-function openAdmin(){
-document.getElementById("adminPanel").style.display="block";
-}
-
-// GIVE COINS
-function giveCoins(){

@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Кликер</title>
+</head>
 
+<body style="text-align:center;font-family:Arial;margin-top:80px;">
+
+<h1>🎮 Кликер</h1>
+
+<h2 id="score">0</h2>
+
+<button onclick="clicker()">💰 КЛИК</button>
+
+<script>
+let score = localStorage.getItem("score");
+
+if (score === null) {
+    score = 0;
+} else {
+    score = parseInt(score);
+}
+
+document.getElementById("score").innerText = score;
+
+function clicker(){
+    score++;
+    document.getElementById("score").innerText = score;
+    localStorage.setItem("score", score);
+}
+</script>
+
+</body>
+</html>

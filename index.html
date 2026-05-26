@@ -1,272 +1,142 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clicker Online</title>
 
-<title>Ultimate Clicker</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 
-<body style="
-margin:0;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-font-family:Arial;
-background:url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
-overflow:hidden;
-">
+<body style="font-family:Arial;background:#111;color:white;text-align:center;padding-top:50px;">
 
-<div style="
-background:rgba(0,0,0,0.65);
-padding:30px;
-border-radius:25px;
-text-align:center;
-color:white;
-width:90%;
-max-width:500px;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
-">
+<h1>💰 Online Clicker RP</h1>
 
-<h1 style="
-font-size:50px;
-margin-bottom:10px;
-">
-💰 Кликер
-</h1>
+<h2 id="score">0</h2>
 
-<h2 id="score" style="
-font-size:45px;
-margin-top:0;
-">
-0
-</h2>
-
-<button onclick="add()" style="
-font-size:30px;
-padding:20px 40px;
-border:none;
-border-radius:20px;
-background:#ffcc00;
-cursor:pointer;
-margin-bottom:20px;
-box-shadow:0 5px 15px rgba(0,0,0,0.4);
-">
-💰 КЛИК
-</button>
-
-<br>
-
-<button onclick="profile()" style="
-padding:12px 20px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-margin:5px;
-">
-👤 Профиль
-</button>
-
-<button onclick="shop()" style="
-padding:12px 20px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-margin:5px;
-">
-🛒 Магазин
-</button>
-
-<button onclick="topPlayers()" style="
-padding:12px 20px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-margin:5px;
-">
-🏆 Топ
-</button>
-
-<button id="adminBtn" onclick="adminPanel()" style="
-padding:12px 20px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-margin:5px;
-background:red;
-color:white;
-display:none;
-">
-⚙️ Админ-панель
-</button>
-
-<div id="adminBox" style="
-display:none;
-margin-top:20px;
-background:rgba(0,0,0,0.8);
-padding:20px;
-border-radius:20px;
-">
-
-<h2>⚙️ Админ-панель</h2>
-
-<p id="roleText">
-Роль: Owner
-</p>
-
-<p id="adminBalance">
-💰 Баланс: 0
-</p>
-
-<button onclick="giveCoins()">
-➕ Выдать 100
-</button>
-
-<button onclick="removeCoins()">
-➖ Забрать 100
-</button>
+<button onclick="add()">💰 Клик</button>
+<button onclick="profile()">👤 Профиль</button>
 
 <br><br>
 
-<button onclick="giveAdmin()">
-⚔️ Выдать Админа
-</button>
+<button id="adminBtn" onclick="openAdmin()" style="display:none;background:red;color:white;">⚙️ Admin</button>
 
-<button onclick="giveModerator()">
-🔧 Выдать Модератора
-</button>
+<div id="adminPanel" style="display:none;margin-top:20px;background:#222;padding:20px;border-radius:10px;">
 
-<br><br>
+<h3>Админ панель</h3>
 
-<button onclick="removeRole()">
-🚫 Снять роль
-</button>
+<input id="targetId" placeholder="ID игрока"><br><br>
+<input id="amount" placeholder="Монеты"><br><br>
+
+<button onclick="giveCoins()">➕ Выдать</button>
+<button onclick="takeCoins()">➖ Забрать</button>
 
 <br><br>
 
-<button onclick="showAdmins()">
-📋 Администрация
-</button>
-
-<button onclick="showUsers()">
-👥 Пользователи
-</button>
-
-<br><br>
-
-<button onclick="resetBalance()">
-🗑 Сбросить баланс
-</button>
-
-<button onclick="addLevel()">
-⭐ +1 Уровень
-</button>
-
-<br><br>
-
-<button onclick="closeAdmin()">
-❌ Закрыть
-</button>
-
-</div>
+<button onclick="giveAdmin()">⚔️ Админ</button>
+<button onclick="giveMod()">🔧 Модер</button>
 
 </div>
 
 <script>
 
-let ownerId = 7942212896;
+// ================= FIREBASE =================
+const firebaseConfig = {
+  apiKey: "AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",
+  authDomain: "clickerrp.firebaseapp.com",
+  databaseURL: "https://clickerrp-default-rtdb.firebaseio.com",
+  projectId: "clickerrp",
+  storageBucket: "clickerrp.firebasestorage.app",
+  messagingSenderId: "610633308170",
+  appId: "1:610633308170:web:e04a923c4bc6e0e05ca7f3"
+};
 
-let currentUserId = 7942212896;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-let admins = [1];
+// ================= OWNER =================
+const ownerId = "7942212896";
+let currentUserId = "7942212896";
 
-let moderators = [];
+// ================= PLAYER =================
+let score = 0;
 
-let users = [];
+db.ref("players/" + currentUserId).on("value", snap => {
+    let data = snap.val();
 
-let level = localStorage.getItem("level");
+    if(data){
+        score = data.balance || 0;
+    } else {
+        db.ref("players/" + currentUserId).set({balance:0});
+    }
 
-if(level == null){
-    level = 1;
-}else{
-    level = parseInt(level);
-}
-
-let score = localStorage.getItem("score");
-
-if(score == null){
-    score = 0;
-}else{
-    score = parseInt(score);
-}
-
-document.getElementById("score").innerText = score;
-
-users.push({
-    id: currentUserId,
-    balance: score,
-    level: level,
-    role: "👑 Owner"
+    document.getElementById("score").innerText = score;
 });
 
-if(
-    currentUserId == ownerId ||
-    admins.includes(currentUserId) ||
-    moderators.includes(currentUserId)
-){
+// ================= CLICK =================
+function add(){
+    score++;
+
+    db.ref("players/" + currentUserId).set({
+        balance: score
+    });
+}
+
+// ================= PROFILE =================
+function profile(){
+    alert("ID: " + currentUserId + "\nБаланс: " + score);
+}
+
+// ================= ADMIN CHECK =================
+if(currentUserId === ownerId){
     document.getElementById("adminBtn").style.display = "inline-block";
 }
 
-function add(){
-
-    score++;
-
-    document.getElementById("score").innerText = score;
-
-    localStorage.setItem("score", score);
-
-    users[0].balance = score;
+// ================= ADMIN PANEL =================
+function openAdmin(){
+    document.getElementById("adminPanel").style.display = "block";
 }
 
-function profile(){
+// ================= GIVE COINS =================
+function giveCoins(){
+    let id = document.getElementById("targetId").value;
+    let amount = Number(document.getElementById("amount").value);
 
-    let role = "👤 Игрок";
-
-    if(currentUserId == ownerId){
-        role = "👑 Owner";
-    }
-    else if(admins.includes(currentUserId)){
-        role = "⚔️ Админ";
-    }
-    else if(moderators.includes(currentUserId)){
-        role = "🔧 Модератор";
-    }
-
-    alert(
-        "👤 ПРОФИЛЬ\n\n" +
-        "🆔 ID: " + currentUserId + "\n" +
-        "💰 Баланс: " + score + "\n" +
-        "⭐ Уровень: " + level + "\n" +
-        "🏆 Роль: " + role
-    );
+    db.ref("players/" + id).once("value", snap => {
+        let data = snap.val() || {balance:0};
+        data.balance += amount;
+        db.ref("players/" + id).set(data);
+    });
 }
 
-function shop(){
+// ================= TAKE COINS =================
+function takeCoins(){
+    let id = document.getElementById("targetId").value;
+    let amount = Number(document.getElementById("amount").value);
 
-    alert(
-        "🛒 МАГАЗИН\n\n" +
-        "Скоро появятся:\n" +
-        "⚡ Бустеры\n" +
-        "💎 VIP\n" +
-        "🚀 Авто-клик"
-    );
+    db.ref("players/" + id).once("value", snap => {
+        let data = snap.val() || {balance:0};
+        data.balance -= amount;
+        if(data.balance < 0) data.balance = 0;
+        db.ref("players/" + id).set(data);
+    });
 }
 
-function topPlayers(){
+// ================= ROLES =================
+function giveAdmin(){
+    let id = document.getElementById("targetId").value;
+    db.ref("admins/" + id).set(true);
+    alert("Админ выдан");
+}
 
-    alert(
-        "🏆 ТОП ИГРОКОВ\n\n" +
-        "1. Owner — " + score + "💰"
-    );
+function giveMod(){
+    let id = document.getElementById("targetId").value;
+    db.ref("mods/" + id).set(true);
+    alert("Модер выдан");
+}
+
+</script>
+
+</body>
+</html>

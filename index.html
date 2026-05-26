@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Кликер</title>
 </head>
 
@@ -92,9 +93,94 @@ font-size:16px;
 🏆 Топ
 </button>
 
+<button onclick="adminPanel()" style="
+padding:12px 20px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+margin:5px;
+font-size:16px;
+background:red;
+color:white;
+">
+⚙️ Админ-панель
+</button>
+
+<div id="adminBox" style="
+display:none;
+margin-top:20px;
+background:rgba(0,0,0,0.7);
+padding:20px;
+border-radius:20px;
+">
+
+<h2>⚙️ Админ-панель</h2>
+
+<p id="roleText">
+Роль: Owner
+</p>
+
+<p id="adminBalance">
+💰 Баланс: 0
+</p>
+
+<button onclick="giveCoins()">
+➕ Выдать 100
+</button>
+
+<button onclick="removeCoins()">
+➖ Забрать 100
+</button>
+
+<br><br>
+
+<button onclick="giveChiefAdmin()">
+🛡️ Главный Админ
+</button>
+
+<button onclick="giveAdmin()">
+⚔️ Админ
+</button>
+
+<button onclick="giveModerator()">
+🔧 Модератор
+</button>
+
+<br><br>
+
+<button onclick="removeRole()">
+🚫 Снять роль
+</button>
+
+<br><br>
+
+<button onclick="showAdmins()">
+📋 Список администрации
+</button>
+
+<br><br>
+
+<button onclick="closeAdmin()">
+❌ Закрыть
+</button>
+
+</div>
+
 </div>
 
 <script>
+
+const ownerId = 123456789;
+
+let owners = [ownerId];
+
+let chiefAdmins = [];
+
+let admins = [];
+
+let moderators = [];
+
+let currentUserId = ownerId;
 
 let score = localStorage.getItem("score");
 
@@ -106,7 +192,8 @@ if(score === null){
 
 document.getElementById("score").innerText = score;
 
-function add() {
+function add(){
+
     score++;
 
     document.getElementById("score").innerText = score;
@@ -115,18 +202,61 @@ function add() {
 }
 
 function profile(){
+
     alert("👤 Ваш баланс: " + score);
 }
 
 function shop(){
+
     alert("🛒 Магазин скоро будет");
 }
 
 function topPlayers(){
+
     alert("🏆 Топ игроков скоро будет");
 }
 
-</script>
+function adminPanel(){
 
-</body>
-</html>
+    let role = "Игрок";
+
+    if(owners.includes(currentUserId)){
+        role = "👑 Owner";
+    }
+    else if(chiefAdmins.includes(currentUserId)){
+        role = "🛡️ Главный Админ";
+    }
+    else if(admins.includes(currentUserId)){
+        role = "⚔️ Админ";
+    }
+    else if(moderators.includes(currentUserId)){
+        role = "🔧 Модератор";
+    }
+    else{
+        alert("❌ Нет доступа");
+        return;
+    }
+
+    document.getElementById("adminBox").style.display = "block";
+
+    document.getElementById("roleText").innerText =
+    "Роль: " + role;
+
+    document.getElementById("adminBalance").innerText =
+    "💰 Баланс: " + score;
+}
+
+function closeAdmin(){
+
+    document.getElementById("adminBox").style.display = "none";
+}
+
+function giveCoins(){
+
+    score += 100;
+
+    document.getElementById("score").innerText = score;
+
+    localStorage.setItem("score", score);
+
+    document.getElementById("adminBalance").innerText =

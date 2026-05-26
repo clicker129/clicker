@@ -1,25 +1,45 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
 <meta charset="UTF-8">
-<title>Clicker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кликер</title>
 </head>
 
 <body style="
-text-align:center;
-font-family:Arial;
-background: linear-gradient(135deg, #1e3c72, #2a5298);
-height:100vh;
 margin:0;
-padding-top:80px;
-color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Arial;
+background:url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+overflow:hidden;
 ">
 
-<h1 style="font-size:50px;">
+<div style="
+background:rgba(0,0,0,0.6);
+padding:30px;
+border-radius:25px;
+text-align:center;
+color:white;
+width:90%;
+max-width:400px;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+">
+
+<h1 style="
+font-size:50px;
+margin-bottom:10px;
+">
 💰 Кликер
 </h1>
 
-<h2 id="score" style="font-size:40px;">
+<h2 id="score" style="
+font-size:45px;
+margin-top:0;
+">
 0
 </h2>
 
@@ -30,32 +50,48 @@ border:none;
 border-radius:20px;
 background:#ffcc00;
 cursor:pointer;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
+margin-bottom:20px;
 ">
 💰 КЛИК
 </button>
 
-<br><br>
+<br>
 
 <button onclick="profile()" style="
-padding:10px 20px;
+padding:12px 20px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
 margin:5px;
+font-size:16px;
 ">
 👤 Профиль
 </button>
 
 <button onclick="shop()" style="
-padding:10px 20px;
+padding:12px 20px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
 margin:5px;
+font-size:16px;
 ">
 🛒 Магазин
 </button>
+
+<button onclick="topPlayers()" style="
+padding:12px 20px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+margin:5px;
+font-size:16px;
+">
+🏆 Топ
+</button>
+
+</div>
 
 <script>
 
@@ -83,6 +119,10 @@ function profile(){
 
 function shop(){
     alert("🛒 Магазин скоро будет");
+}
+
+function topPlayers(){
+    alert("🏆 Топ игроков скоро будет");
 }
 
 </script>

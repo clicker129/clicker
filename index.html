@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Кликер</title>
 </head>
 
@@ -25,7 +25,8 @@ border-radius:25px;
 text-align:center;
 color:white;
 width:90%;
-max-width:400px;
+max-width:450px;
+min-width:280px;
 box-shadow:0 10px 30px rgba(0,0,0,0.5);
 ">
 
@@ -37,14 +38,14 @@ margin-bottom:10px;
 </h1>
 
 <h2 id="score" style="
-font-size:45px;
+font-size:clamp(30px, 7vw, 45px);
 margin-top:0;
 ">
 0
 </h2>
 
 <button onclick="add()" style="
-font-size:30px;
+font-size:clamp(20px, 5vw, 30px);
 padding:20px 40px;
 border:none;
 border-radius:20px;

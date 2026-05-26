@@ -4,7 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Кликер</title>
 </head>
 
@@ -93,7 +92,7 @@ font-size:16px;
 🏆 Топ
 </button>
 
-<button onclick="adminPanel()" style="
+<button id="adminBtn" onclick="adminPanel()" style="
 padding:12px 20px;
 border:none;
 border-radius:12px;
@@ -102,6 +101,7 @@ margin:5px;
 font-size:16px;
 background:red;
 color:white;
+display:none;
 ">
 ⚙️ Админ-панель
 </button>
@@ -192,6 +192,15 @@ if(score === null){
 
 document.getElementById("score").innerText = score;
 
+if(
+    owners.includes(currentUserId) ||
+    chiefAdmins.includes(currentUserId) ||
+    admins.includes(currentUserId) ||
+    moderators.includes(currentUserId)
+){
+    document.getElementById("adminBtn").style.display = "inline-block";
+}
+
 function add(){
 
     score++;
@@ -220,16 +229,10 @@ function profile(){
 
     alert(
         "👤 Профиль игрока\n\n" +
-
         "🆔 ID: " + currentUserId + "\n" +
-
         "💰 Баланс: " + score + "\n" +
-
         "🏆 Роль: " + role + "\n" +
-
-        "⚡ Уровень: " + Math.floor(score / 100) + "\n" +
-
-        "📅 Аккаунт активен"
+        "⚡ Уровень: " + Math.floor(score / 100)
     );
 }
 
@@ -250,13 +253,4 @@ function adminPanel(){
     if(owners.includes(currentUserId)){
         role = "👑 Owner";
     }
-    else if(chiefAdmins.includes(currentUserId)){
-        role = "🛡️ Главный Админ";
-    }
-    else if(admins.includes(currentUserId)){
-        role = "⚔️ Админ";
-    }
-    else if(moderators.includes(currentUserId)){
-        role = "🔧 Модератор";
-    }
-    else{
+    else if(chiefAdmins.

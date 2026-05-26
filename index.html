@@ -1,36 +1,49 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Кликер</title>
+<meta charset="UTF-8">
+<title>Clicker Game</title>
 </head>
-<body style="text-align:center; font-family:Arial;">
 
-    <h1>💰 Кликер</h1>
+<body style="text-align:center;font-family:Arial;margin-top:80px;">
 
-    <h2 id="score">0</h2>
+<h1>🎮 Кликер</h1>
 
-    <button onclick="clicker()" style="font-size:20px; padding:10px 20px;">
-        💰 КЛИК
-    </button>
+<h2 id="score">0</h2>
 
-    <script>
-        let score = localStorage.getItem("score");
+<button onclick="clicker()" style="font-size:25px;padding:15px 30px;">
+💰 КЛИК
+</button>
 
-        if (score === null) {
-            score = 0;
-        } else {
-            score = parseInt(score);
-        }
+<br><br>
 
-        document.getElementById("score").innerText = score;
+<button onclick="resetGame()" style="font-size:18px;padding:10px 20px;">
+🔄 Сброс
+</button>
 
-        function clicker() {
-            score++;
-            document.getElementById("score").innerText = score;
-            localStorage.setItem("score", score);
-        }
-    </script>
+<script>
+let score = localStorage.getItem("score");
+
+if (score === null) {
+    score = 0;
+} else {
+    score = parseInt(score);
+}
+
+document.getElementById("score").innerText = score;
+
+function clicker(){
+    score++;
+    document.getElementById("score").innerText = score;
+    localStorage.setItem("score", score);
+}
+
+function resetGame(){
+    score = 0;
+    document.getElementById("score").innerText = score;
+    localStorage.setItem("score", score);
+}
+</script>
 
 </body>
 </html>

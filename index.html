@@ -4,20 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>CLICKER RP PRO</title>
-
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 -webkit-tap-highlight-color:transparent;
 }
-
 body{
 font-family:Arial,sans-serif;
 height:100vh;
@@ -32,7 +28,6 @@ justify-content:center;
 align-items:center;
 padding:15px;
 }
-
 .main{
 width:100%;
 max-width:550px;
@@ -44,27 +39,23 @@ backdrop-filter:blur(10px);
 box-shadow:0 0 35px rgba(0,255,255,.25);
 color:white;
 }
-
 h1{
 font-size:34px;
 color:#00ffe5;
 margin-bottom:15px;
 text-shadow:0 0 15px #00ffe5;
 }
-
 #score{
 font-size:50px;
 font-weight:bold;
 color:#00ff95;
 margin-top:10px;
 }
-
 #level{
 font-size:22px;
 margin-top:10px;
 color:#ddd;
 }
-
 .clickBtn{
 margin-top:20px;
 width:100%;
@@ -79,11 +70,9 @@ color:white;
 box-shadow:0 0 25px rgba(0,255,255,.5);
 transition:.15s;
 }
-
 .clickBtn:active{
 transform:scale(.97);
 }
-
 .menu{
 margin-top:20px;
 display:flex;
@@ -91,7 +80,6 @@ flex-wrap:wrap;
 justify-content:center;
 gap:10px;
 }
-
 .btn{
 padding:12px 16px;
 border:none;
@@ -102,16 +90,13 @@ font-weight:bold;
 background:#1f2937;
 color:white;
 }
-
 .adminBtn{
 background:#dc2626;
 }
-
 .ownerBtn{
 background:#ffb703;
 color:black;
 }
-
 .panel{
 display:none;
 margin-top:18px;
@@ -120,12 +105,10 @@ padding:15px;
 border-radius:15px;
 border:1px solid #00ffe5;
 }
-
 .panel h3{
 margin-bottom:12px;
 color:#00ffe5;
 }
-
 input{
 width:100%;
 padding:12px;
@@ -135,7 +118,6 @@ border-radius:10px;
 font-size:16px;
 outline:none;
 }
-
 .shopBtn{
 width:100%;
 padding:14px;
@@ -148,122 +130,87 @@ font-weight:bold;
 background:#1f2937;
 color:white;
 }
-
 .shopBtn:hover{
 background:#374151;
 }
-
 .status{
 margin-top:18px;
 font-size:14px;
 color:#aaa;
 }
-
 @media(max-width:700px){
-
 body{
 align-items:flex-start;
 padding-top:20px;
 }
-
 .main{
 padding:20px;
 }
-
 .clickBtn{
 font-size:28px;
 padding:20px;
 }
-
 }
-
 </style>
 </head>
-
 <body>
-
 <div class="main">
-
 <h1>💎 CLICKER RP PRO</h1>
-
 <script async src="https://telegram.org/js/telegram-widget.js?22"
 data-telegram-login="ClickerEmpireGameBot"
 data-size="large"
 data-onauth="onTelegramAuth(user)">
 </script>
-
 <div id="score">0</div>
 <div id="level">Level: 1</div>
-
 <button class="clickBtn" onclick="addClick()">💥 КЛИК</button>
-
 <div class="menu">
-<button class="btn ownerBtn" onclick="setOwner()">
+<button id="setOwnerBtn" class="btn ownerBtn" onclick="setOwner()">
 👑 СТАТЬ OWNER
 </button>
-
 <button class="btn" onclick="togglePanel('shop')">
 🛒 Магазин
 </button>
-
 <button class="btn" onclick="profile()">
 👤 Профиль
 </button>
-
 <button class="btn" onclick="togglePanel('send')">
 💸 Перевод
 </button>
-
 <button class="btn adminBtn" id="adminOpen" onclick="togglePanel('admin')">
 ⚙️ Админ
 </button>
-
-<button class="btn ownerBtn" id="ownerOpen" onclick="togglePanel('owner')">
+<button class="btn ownerBtn" id="ownerOpen"
+style="display:none"
+onclick="togglePanel('owner')">
 👑 Owner
 </button>
-
 </div>
-
 <!-- SHOP -->
-
 <div class="panel" id="shop">
-
 <h3>🛒 Магазин</h3>
-
 <button class="shopBtn" onclick="buyPower()">
 ⚡ +1 Сила — 100
 </button>
-
 <button class="shopBtn" onclick="buyLevel()">
 ⭐ +1 Уровень — 200
 </button>
-
 </div>
-
 <!-- ADMIN -->
-
 <div class="panel" id="admin">
-
 <h3>⚙️ Админ Панель</h3>
-
 <input type="text" id="adminId" placeholder="ID игрока">
-
 <input type="number" id="adminMoney" placeholder="Монеты">
-
 <button class="shopBtn" onclick="giveCoins()">
 ➕ Выдать монеты
 </button>
-
 <button class="shopBtn" onclick="takeCoins()">
 ➖ Забрать монеты
 </button>
-
 <button class="shopBtn" onclick="giveAdmin()">
 ⚔️ Выдать админку
 </button>
-
 </div>
-
 <!-- OWNER -->
 <div class="panel" id="owner">
 <h3>👑 Owner Панель</h3>
@@ -272,7 +219,6 @@ data-onauth="onTelegramAuth(user)">
 🧨 Сбросить игрока
 </button>
 </div>
-
 <!-- SEND -->
 <div class="panel" id="send">
 <h3>💸 Перевод игроку</h3>
@@ -282,19 +228,13 @@ data-onauth="onTelegramAuth(user)">
 💸 Отправить
 </button>
 </div>
-
 </div>
-
 <div class="status" id="status">
 Загрузка...
 </div>
-
 </div>
-
 <script>
-
 // ================= FIREBASE =================
-
 const firebaseConfig = {
 apiKey:"AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",
 authDomain:"clickerrp.firebaseapp.com",
@@ -304,56 +244,45 @@ storageBucket:"clickerrp.firebasestorage.app",
 messagingSenderId:"610633308170",
 appId:"1:610633308170:web:e04a923c4bc6e0e05ca7f3"
 };
-
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.database();
-
 // ================= USER =================
 let currentUserId = null;
-let ownerId = null;
-
-db.ref("owner").once("value").then(snap=>{
-  ownerId = snap.val();
-});
+let ownerId = "7942212896"; 
 
 function onTelegramAuth(user){
   currentUserId = user.id.toString();
-  loadData();
-  checkRoles();
+
+  db.ref("owner").once("value").then(snap=>{
+    if(snap.exists()){
+      ownerId = snap.val();
+    }
+    loadData();
+    checkRoles();
+  });
 }
 // ================= DATA =================
-
 let score = 0;
 let level = 1;
 let power = 1;
-
 // ================= UPDATE UI =================
-
 function updateUI(){
-
 document.getElementById("score").innerText = score;
-
 document.getElementById("level").innerText =
 "Level: " + level;
-
 }
-
 // ================= LOAD =================
 function loadData(){
   if(!currentUserId) return;
-
   db.ref("players/" + currentUserId)
   .once("value")
   .then((snap)=>{
     const data = snap.val();
-
     if(data){
       score = data.balance || 0;
       level = data.level || 1;
       power = data.power || 1;
     }
-
     updateUI();
     document.getElementById("status").innerText = "✅ Firebase подключен";
   })
@@ -362,105 +291,69 @@ function loadData(){
     document.getElementById("status").innerText = "❌ Ошибка Firebase";
   });
 }
-
 // ================= SAVE =================
-
 function saveData(){
-
 db.ref("players/" + currentUserId).set({
 balance:score,
 level:level,
 power:power
 });
-
 updateUI();
-
 }
-
 // ================= CLICK =================
-
 function addClick(){
-
 score += power;
-
 saveData();
-
 }
-
 // ================= PROFILE =================
-
 function profile(){
-
 alert(
 "🆔 ID: " + currentUserId +
 "\n💰 Баланс: " + score +
 "\n⭐ Уровень: " + level +
 "\n⚡ Сила: " + power
 );
-
 }
-
 // ================= TOGGLE PANELS =================
-
 function togglePanel(id){
-
 const panel = document.getElementById(id);
-
 if(panel.style.display === "block"){
 panel.style.display = "none";
 }else{
 panel.style.display = "block";
 }
-
 }
-
 // ================= SHOP =================
-
 function buyPower(){
-
 if(score < 100){
 alert("❌ Недостаточно монет");
 return;
 }
-
 score -= 100;
 power++;
-
 saveData();
-
 alert("⚡ Сила улучшена");
-
 }
-
 function buyLevel(){
-
 if(score < 200){
 alert("❌ Недостаточно монет");
 return;
 }
-
 score -= 200;
 level++;
-
 saveData();
-
 alert("⭐ Уровень повышен");
-
 }
-
 // ================= ADMIN =================
-
 function giveCoins(){
 const id =
 document.getElementById("adminId").value;
 const money =
 Number(document.getElementById("adminMoney").value);
-
 if(!id || !money){
 alert("❌ Заполни поля");
 return;
 }
-
 db.ref("players/" + id)
 .transaction((data)=>{
 if(data === null){
@@ -480,116 +373,83 @@ alert("✅ Монеты выданы");
 alert("❌ Ошибка");
 });
 }
-
 function takeCoins(){
-
 const id =
 document.getElementById("adminId").value;
-
 const money =
 Number(document.getElementById("adminMoney").value);
-
 if(!id || !money){
 alert("❌ Заполни поля");
 return;
 }
-
 db.ref("players/" + id)
 .once("value")
 .then((snap)=>{
-
 const data = snap.val() || {
 balance:0,
 level:1,
 power:1
 };
-
 data.balance -= money;
-
 if(data.balance < 0){
 data.balance = 0;
 }
-
 db.ref("players/" + id).set(data);
-
 alert("✅ Монеты забраны");
-
 });
-
 }
-
 function giveAdmin(){
-
 const id =
 document.getElementById("adminId").value;
-
 if(!id){
 alert("❌ Введите ID");
 return;
 }
-
 db.ref("admins/" + id).set(true);
-
 alert("⚔️ Админка выдана");
-
 }
-
 // ================= OWNER =================
-
 function resetPlayer(){
-
 if(currentUserId !== ownerId){
 alert("❌ Нет доступа");
 return;
 }
-
 const id =
 document.getElementById("ownerIdInput").value;
-
 if(!id){
 alert("❌ Введите ID");
 return;
 }
-
 db.ref("players/" + id).set({
 balance:0,
 level:1,
 power:1
 });
-
 alert("🧨 Игрок сброшен");
-
 }
-
 function sendCoins(){
 const targetId = document.getElementById("sendId").value;
 const amount = Number(document.getElementById("sendMoney").value);
-
 if(!targetId || !amount){
 alert("❌ Заполни поля");
 return;
 }
-
 if(amount <= 0){
 alert("❌ Неверная сумма");
 return;
 }
-
 if(targetId === currentUserId){
 alert("❌ Нельзя отправить себе");
 return;
 }
-
 // сначала проверка
 db.ref("players/" + currentUserId).once("value")
 .then((snap)=>{
 const data = snap.val();
-
 if(!data || (data.balance || 0) < amount){
 alert("❌ Недостаточно денег");
 return;
 }
-
 // снимаем деньги
 return db.ref("players/" + currentUserId).transaction((d)=>{
 if(!d) return;
@@ -607,38 +467,48 @@ return d;
 });
 })
 .then(()=>{
-
 const time = new Date().toLocaleString();
-
 db.ref("transactions/" + currentUserId).push({
 type: "send",
 to: targetId,
 amount: amount,
 time: time
 });
-
 db.ref("transactions/" + targetId).push({
 type: "receive",
 from: currentUserId,
 amount: amount,
 time: time
 });
-
 alert("✅ Перевод выполнен");
 });
 });
 }
 
 function setOwner(){
+  if(currentUserId !== "7942212896"){
+    alert("❌ Только ты можешь стать owner");
+    return;
+  }
+
   db.ref("owner").set(currentUserId);
-  ownerId = currentUserId; // ВАЖНО
-  checkRoles(); // обновляет кнопки
+  ownerId = currentUserId;
+
+  checkRoles();
   alert("👑 Ты теперь owner");
-} 
+}
+
 // ================= ROLES =================
 function checkRoles(){
+
+document.getElementById("setOwnerBtn").style.display = "none";
 document.getElementById("ownerOpen").style.display = "none";
 document.getElementById("adminOpen").style.display = "none";
+
+// 👇 ТОЛЬКО ТВОЙ ID ВИДИТ КНОПКУ
+if(currentUserId === "7942212896"){
+  document.getElementById("setOwnerBtn").style.display = "inline-block";
+}
 
 db.ref("admins/" + currentUserId).once("value")
 .then((snap)=>{
@@ -651,8 +521,8 @@ if(currentUserId === ownerId){
 document.getElementById("ownerOpen").style.display = "inline-block";
 document.getElementById("adminOpen").style.display = "inline-block";
 }
+
 }
 </script>
-
 </body>
-</html>
+</html> 

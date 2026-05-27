@@ -249,10 +249,9 @@ let ownerId = "7942212896";
 function initUser(){
   let tg = window.Telegram?.WebApp;
 
-  if(!tg){
-    alert("❌ Открой через Telegram");
-    return;
-  }
+if(!tg){
+  console.log("НЕ Telegram");
+}
 
   tg.expand();
 
@@ -274,13 +273,12 @@ function initUser(){
   }
 
   // 💥 ЕСЛИ ВСЁ РАВНО НЕТ
-  if(!user){
-    alert("❌ Telegram не передал user");
-    return;
-  }
-
+if(!user){
+  currentUserId = "123456789"; // тест
+  console.log("TEST MODE");
+} else {
   currentUserId = user.id.toString();
-  console.log("MY ID:", currentUserId);
+}
 
   db.ref("owner").once("value").then(snap=>{
     if(snap.exists()){

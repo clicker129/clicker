@@ -274,10 +274,6 @@ padding:20px;
 </button>
 </div>
 
-<button class="shopBtn" onclick="resetPlayer()">
-🧨 Сбросить игрока
-</button>
-
 </div>
 
 <div class="status" id="status">
@@ -307,8 +303,12 @@ const db = firebase.database();
 // ================= USER =================
 
 const ownerId = "maksim";
-let currentUserId = prompt("Введите ID");
+let currentUserId = localStorage.getItem("userId");
 
+if(!currentUserId){
+currentUserId = prompt("Введите ID");
+localStorage.setItem("userId", currentUserId);
+}
 
 if(!currentUserId){
 currentUserId = Math.floor(Math.random()*1000000000).toString();
@@ -641,7 +641,7 @@ alert("✅ Перевод выполнен");
 document.getElementById("adminOpen").style.display = "none";
 document.getElementById("ownerOpen").style.display = "none";
 
-db.ref("admins/" + currentUserId).once("value")
+db.ref("admins/" + currentUserId).once("value
 .then((snap)=>{
 if(snap.exists()){
 document.getElementById("adminOpen").style.display = "inline-block";

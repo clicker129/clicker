@@ -246,7 +246,6 @@ const db = firebase.database();
 // ================= USER =================
 let currentUserId = null;
 let ownerId = "7942212896"; 
-
 function initUser(){
   let tg = window.Telegram?.WebApp;
 
@@ -259,23 +258,25 @@ function initUser(){
 
   let user = tg.initDataUnsafe?.user;
 
+  // 💥 ЕСЛИ НЕ ПРИШЁЛ USER → БЕРЁМ ИЗ initData
   if(!user){
-    let data = tg.initData;
+    try{
+      let data = tg.initData;
+      let params = new URLSearchParams(data);
+      let userStr = params.get("user");
 
-    if(!data){
-      alert("❌ Telegram не передал данные");
-      return;
+      if(userStr){
+        user = JSON.parse(userStr);
+      }
+    }catch(e){
+      console.log(e);
     }
+  }
 
-    let params = new URLSearchParams(data);
-    let userStr = params.get("user");
-
-    if(!userStr){
-      alert("❌ Нет user в initData");
-      return;
-    }
-
-    user = JSON.parse(userStr);
+  // 💥 ЕСЛИ ВСЁ РАВНО НЕТ
+  if(!user){
+    alert("❌ Telegram не передал user");
+    return;
   }
 
   currentUserId = user.id.toString();

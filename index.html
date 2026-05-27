@@ -156,11 +156,7 @@ padding:20px;
 <body>
 <div class="main">
 <h1>💎 CLICKER RP PRO</h1>
-<script async src="https://telegram.org/js/telegram-widget.js?22"
-data-telegram-login="ClickerEmpireGameBot"
-data-size="large"
-data-onauth="onTelegramAuth(user)">
-</script>
+
 <div id="score">0</div>
 <div id="level">Level: 1</div>
 <button class="clickBtn" onclick="addClick()">💥 КЛИК</button>
@@ -233,10 +229,15 @@ onclick="togglePanel('owner')">
 Загрузка...
 </div>
 </div>
+
 <script>
 
-if(typeof Telegram === "undefined"){
+let tg = window.Telegram?.WebApp;
+
+if(!tg){
   document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Открой через Telegram</h2>";
+} else {
+  tg.expand();
 }
 // ================= FIREBASE =================
 const firebaseConfig = {
@@ -254,19 +255,23 @@ const db = firebase.database();
 let currentUserId = null;
 let ownerId = "7942212896"; 
 
-function onTelegramAuth(user){
-  if(!user || !user.id){
-    alert("❌ Ошибка авторизации Telegram");
+function initUser(){
+  let tg = window.Telegram?.WebApp;
+  let user = tg?.initDataUnsafe?.user;
+
+  if(!user){
+    alert("❌ Telegram не дал ID");
     return;
   }
 
   currentUserId = user.id.toString();
 
+  console.log("MY ID:", currentUserId);
+
   db.ref("owner").once("value").then(snap=>{
     if(snap.exists()){
       ownerId = snap.val();
     }
-
     loadData();
     checkRoles();
   });
@@ -563,6 +568,6 @@ document.getElementById("adminOpen").style.display = "inline-block";
 }
 
 }
-</script>
+initUser(); </script>
 </body>
 </html> 

@@ -234,6 +234,10 @@ onclick="togglePanel('owner')">
 </div>
 </div>
 <script>
+
+if(typeof Telegram === "undefined"){
+  document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Открой через Telegram</h2>";
+}
 // ================= FIREBASE =================
 const firebaseConfig = {
 apiKey:"AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",

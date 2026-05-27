@@ -544,6 +544,11 @@ alert("⚔️ Админка выдана");
 
 function resetPlayer(){
 
+if(currentUserId !== ownerId){
+alert("❌ Нет доступа");
+return;
+}
+
 const id =
 document.getElementById("ownerIdInput").value;
 
@@ -608,8 +613,26 @@ return d;
 });
 })
 .then(()=>{
-alert("✅ Перевод выполнен");
+
+const time = new Date().toLocaleString();
+
+// запись тебе (отправка)
+db.ref("transactions/" + currentUserId).push({
+type: "send",
+to: targetId,
+amount: amount,
+time: time
 });
+
+// запись получателю
+db.ref("transactions/" + targetId).push({
+type: "receive",
+from: currentUserId,
+amount: amount,
+time: time
+});
+
+alert("✅ Перевод выполнен");
 });
 }
 

@@ -201,6 +201,10 @@ padding:20px;
 👤 Профиль
 </button>
 
+<button class="btn" onclick="togglePanel('send')">
+💸 Перевод
+</button>
+
 <button class="btn adminBtn" id="adminOpen" onclick="togglePanel('admin')">
 ⚙️ Админ
 </button>
@@ -252,8 +256,18 @@ padding:20px;
 </div>
 
 <!-- OWNER -->
-
 <div class="panel" id="owner">
+
+</div>
+
+<div class="panel" id="send">
+<h4>💸 Перевод игроку</h3>
+<input type="text" id="sendId" placeholder="ID игрока">
+<input type="number" id="sendMoney" placeholder="Сколько отправить">
+<button class="shopBtn" onclick="sendCoins()">
+💸 Отправить
+</button>
+</div>
 
 <h3>👑 Owner Панель</h3>
 
@@ -546,6 +560,48 @@ alert("🧨 Игрок сброшен");
 
 }
 
+function sendCoins(){
+const targetId = document.getElementById("sendId").value;
+const amount = Number(document.getElementById("sendMoney").value);
+
+if(!targetId || !amount){
+alert("❌ Заполни поля");
+return;
+}
+
+if(amount <= 0){
+alert("❌ Неверная сумма");
+return;
+}
+
+if(targetId === currentUserId){
+alert("❌ Нельзя отправить себе");
+return;
+}
+
+db.ref("players/" + currentUserId).transaction((data)=>{
+if(!data || (data.balance || 0) < amount){
+alert("❌ Недостаточно денег");
+return;
+}
+data.balance -= amount;
+return data;
+})
+.then((res)=>{
+if(!res.committed) return;
+
+return db.ref("players/" + targetId).transaction((data)=>{
+if(data === null){
+return {balance: amount, level:1, power:1};
+}
+data.balance = (data.balance || 0) + amount;
+return data;
+});
+})
+.then(()=>{
+alert("✅ Перевод выполнен");
+});
+}
 
 // ================= ROLES =================
 

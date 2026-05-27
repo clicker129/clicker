@@ -186,12 +186,21 @@ padding:20px;
 
 <h1>💎 CLICKER RP PRO</h1>
 
+<script async src="https://telegram.org/js/telegram-widget.js?22"
+data-telegram-login="ClickerEmpireGameBot"
+data-size="large"
+data-onauth="onTelegramAuth(user)">
+</script>
+
 <div id="score">0</div>
 <div id="level">Level: 1</div>
 
 <button class="clickBtn" onclick="addClick()">💥 КЛИК</button>
 
 <div class="menu">
+<button class="btn ownerBtn" onclick="setOwner()">
+👑 СТАТЬ OWNER
+</button>
 
 <button class="btn" onclick="togglePanel('shop')">
 🛒 Магазин
@@ -301,20 +310,18 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ================= USER =================
+let currentUserId = null;
+let ownerId = null;
 
-const ownerId = "maksim";
-let currentUserId = localStorage.getItem("userId");
+db.ref("owner").once("value").then(snap=>{
+  ownerId = snap.val();
+});
 
-if(!currentUserId){
-currentUserId = prompt("Введите ID");
-localStorage.setItem("userId", currentUserId);
+function onTelegramAuth(user){
+  currentUserId = user.id.toString();
+  loadData();
+  checkRoles();
 }
-
-if(!currentUserId){
-currentUserId = Math.floor(Math.random()*1000000000).toString();
-localStorage.setItem("userId", currentUserId);
-}
-
 // ================= DATA =================
 
 let score = 0;
@@ -333,41 +340,28 @@ document.getElementById("level").innerText =
 }
 
 // ================= LOAD =================
-
 function loadData(){
+  if(!currentUserId) return;
 
-db.ref("players/" + currentUserId)
-.once("value")
-.then((snap)=>{
+  db.ref("players/" + currentUserId)
+  .once("value")
+  .then((snap)=>{
+    const data = snap.val();
 
-const data = snap.val();
+    if(data){
+      score = data.balance || 0;
+      level = data.level || 1;
+      power = data.power || 1;
+    }
 
-if(data){
-
-score = data.balance || 0;
-level = data.level || 1;
-power = data.power || 1;
-
+    updateUI();
+    document.getElementById("status").innerText = "✅ Firebase подключен";
+  })
+  .catch((err)=>{
+    console.log(err);
+    document.getElementById("status").innerText = "❌ Ошибка Firebase";
+  });
 }
-
-updateUI();
-
-document.getElementById("status").innerText =
-"✅ Firebase подключен";
-
-})
-.catch((err)=>{
-
-console.log(err);
-
-document.getElementById("status").innerText =
-"❌ Ошибка Firebase";
-
-});
-
-}
-
-loadData();
 
 // ================= SAVE =================
 
@@ -635,12 +629,16 @@ alert("✅ Перевод выполнен");
 });
 }
 
-
+function setOwner(){
+  db.ref("owner").set(currentUserId);
+  ownerId = currentUserId; // ВАЖНО
+  checkRoles(); // обновляет кнопки
+  alert("👑 Ты теперь owner");
+} 
 // ================= ROLES =================
-
-document.getElementById("adminOpen").style.display = "none";
+function checkRoles(){
 document.getElementById("ownerOpen").style.display = "none";
-
+document.getElementById("adminOpen").style.display = "none";
 
 db.ref("admins/" + currentUserId).once("value")
 .then((snap)=>{
@@ -652,6 +650,7 @@ document.getElementById("adminOpen").style.display = "inline-block";
 if(currentUserId === ownerId){
 document.getElementById("ownerOpen").style.display = "inline-block";
 document.getElementById("adminOpen").style.display = "inline-block";
+}
 }
 </script>
 

@@ -251,12 +251,18 @@ let currentUserId = null;
 let ownerId = "7942212896"; 
 
 function onTelegramAuth(user){
+  if(!user || !user.id){
+    alert("❌ Ошибка авторизации Telegram");
+    return;
+  }
+
   currentUserId = user.id.toString();
 
   db.ref("owner").once("value").then(snap=>{
     if(snap.exists()){
       ownerId = snap.val();
     }
+
     loadData();
     checkRoles();
   });
@@ -302,8 +308,13 @@ updateUI();
 }
 // ================= CLICK =================
 function addClick(){
-score += power;
-saveData();
+  if(!currentUserId){
+    alert("❌ Войди через Telegram");
+    return;
+  }
+
+  score += power;
+  saveData();
 }
 // ================= PROFILE =================
 function profile(){
@@ -345,68 +356,93 @@ saveData();
 alert("⭐ Уровень повышен");
 }
 // ================= ADMIN =================
+// ================= ADMIN =================
+
 function giveCoins(){
-const id =
-document.getElementById("adminId").value;
-const money =
-Number(document.getElementById("adminMoney").value);
-if(!id || !money){
-alert("❌ Заполни поля");
-return;
+  // защита
+  if(currentUserId !== ownerId){
+    alert("❌ Нет доступа");
+    return;
+  }
+
+  const id = document.getElementById("adminId").value;
+  const money = Number(document.getElementById("adminMoney").value);
+
+  if(!id || !money){
+    alert("❌ Заполни поля");
+    return;
+  }
+
+  db.ref("players/" + id)
+  .transaction((data)=>{
+    if(data === null){
+      return {
+        balance: money,
+        level:1,
+        power:1
+      };
+    }
+    data.balance = (data.balance || 0) + money;
+    return data;
+  })
+  .then(()=>{
+    alert("✅ Монеты выданы");
+  })
+  .catch(()=>{
+    alert("❌ Ошибка");
+  });
 }
-db.ref("players/" + id)
-.transaction((data)=>{
-if(data === null){
-return {
-balance: money,
-level:1,
-power:1
-};
-}
-data.balance = (data.balance || 0) + money;
-return data;
-})
-.then(()=>{
-alert("✅ Монеты выданы");
-})
-.catch(()=>{
-alert("❌ Ошибка");
-});
-}
+
 function takeCoins(){
-const id =
-document.getElementById("adminId").value;
-const money =
-Number(document.getElementById("adminMoney").value);
-if(!id || !money){
-alert("❌ Заполни поля");
-return;
+  // защита
+  if(currentUserId !== ownerId){
+    alert("❌ Нет доступа");
+    return;
+  }
+
+  const id = document.getElementById("adminId").value;
+  const money = Number(document.getElementById("adminMoney").value);
+
+  if(!id || !money){
+    alert("❌ Заполни поля");
+    return;
+  }
+
+  db.ref("players/" + id)
+  .once("value")
+  .then((snap)=>{
+    const data = snap.val() || {
+      balance:0,
+      level:1,
+      power:1
+    };
+
+    data.balance -= money;
+    if(data.balance < 0){
+      data.balance = 0;
+    }
+
+    db.ref("players/" + id).set(data);
+    alert("✅ Монеты забраны");
+  });
 }
-db.ref("players/" + id)
-.once("value")
-.then((snap)=>{
-const data = snap.val() || {
-balance:0,
-level:1,
-power:1
-};
-data.balance -= money;
-if(data.balance < 0){
-data.balance = 0;
-}
-db.ref("players/" + id).set(data);
-alert("✅ Монеты забраны");
-});
-}
+
 function giveAdmin(){
-const id =
-document.getElementById("adminId").value;
-if(!id){
-alert("❌ Введите ID");
-return;
-}
-db.ref("admins/" + id).set(true);
-alert("⚔️ Админка выдана");
+  // защита
+  if(currentUserId !== ownerId){
+    alert("❌ Нет доступа");
+    return;
+  }
+
+  const id = document.getElementById("adminId").value;
+
+  if(!id){
+    alert("❌ Введите ID");
+    return;
+  }
+
+  db.ref("admins/" + id).set(true);
+  alert("⚔️ Админка выдана");
 }
 // ================= OWNER =================
 function resetPlayer(){

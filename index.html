@@ -231,66 +231,6 @@ onclick="togglePanel('owner')">
 </div>
 
 <script>
-
-let tg = window.Telegram?.WebApp;
-
-if(!tg){
-  document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Открой через Telegram</h2>";
-} else {
-  tg.expand();
-}
-
-<script>
-let tg = window.Telegram?.WebApp;
-if(!tg){
-  document.body.innerHTML = "<h2 style='color:white;text-align:center'>❌ Открой через Telegram</h2>";
-} else {
-  tg.expand();
-}
-
-// 👉 ВСТАВЛЯЕШЬ ПРЯМО ЗДЕСЬ
-function initUser(){
-  let tg = window.Telegram?.WebApp;
-
-  if(!tg){
-    alert("❌ Открой через Telegram");
-    return;
-  }
-
-  tg.expand();
-
-  let user = tg.initDataUnsafe?.user;
-
-  if(!user){
-    let data = tg.initData;
-    if(!data){
-      alert("❌ Telegram не передал данные");
-      return;
-    }
-
-    let params = new URLSearchParams(data);
-    let userStr = params.get("user");
-
-    if(!userStr){
-      alert("❌ Нет user в initData");
-      return;
-    }
-
-    user = JSON.parse(userStr);
-  }
-
-  currentUserId = user.id.toString();
-
-  console.log("MY ID:", currentUserId);
-
-  db.ref("owner").once("value").then(snap=>{
-    if(snap.exists()){
-      ownerId = snap.val();
-    }
-    loadData();
-    checkRoles();
-  });
-}
 // ================= FIREBASE =================
 const firebaseConfig = {
 apiKey:"AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",
@@ -309,15 +249,36 @@ let ownerId = "7942212896";
 
 function initUser(){
   let tg = window.Telegram?.WebApp;
-  let user = tg?.initDataUnsafe?.user;
 
-  if(!user){
-    alert("❌ Telegram не дал ID");
+  if(!tg){
+    alert("❌ Открой через Telegram");
     return;
   }
 
-  currentUserId = user.id.toString();
+  tg.expand();
 
+  let user = tg.initDataUnsafe?.user;
+
+  if(!user){
+    let data = tg.initData;
+
+    if(!data){
+      alert("❌ Telegram не передал данные");
+      return;
+    }
+
+    let params = new URLSearchParams(data);
+    let userStr = params.get("user");
+
+    if(!userStr){
+      alert("❌ Нет user в initData");
+      return;
+    }
+
+    user = JSON.parse(userStr);
+  }
+
+  currentUserId = user.id.toString();
   console.log("MY ID:", currentUserId);
 
   db.ref("owner").once("value").then(snap=>{

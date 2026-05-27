@@ -581,27 +581,35 @@ alert("❌ Нельзя отправить себе");
 return;
 }
 
-db.ref("players/" + currentUserId).transaction((data)=>{
+// сначала проверка
+db.ref("players/" + currentUserId).once("value")
+.then((snap)=>{
+const data = snap.val();
+
 if(!data || (data.balance || 0) < amount){
 alert("❌ Недостаточно денег");
 return;
 }
-data.balance -= amount;
-return data;
-})
-.then((res)=>{
-if(!res.committed) return;
 
-return db.ref("players/" + targetId).transaction((data)=>{
-if(data === null){
+// снимаем деньги
+return db.ref("players/" + currentUserId).transaction((d)=>{
+if(!d) return;
+d.balance -= amount;
+return d;
+})
+.then(()=>{
+// начисляем другому
+return db.ref("players/" + targetId).transaction((d)=>{
+if(d === null){
 return {balance: amount, level:1, power:1};
 }
-data.balance = (data.balance || 0) + amount;
-return data;
+d.balance = (d.balance || 0) + amount;
+return d;
 });
 })
 .then(()=>{
 alert("✅ Перевод выполнен");
+});
 });
 }
 

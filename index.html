@@ -546,18 +546,23 @@ alert("🧨 Игрок сброшен");
 
 }
 
+
 // ================= ROLES =================
 
-document.getElementById("adminOpen").style.display =
-"inline-block";
+document.getElementById("adminOpen").style.display = "none";
+document.getElementById("ownerOpen").style.display = "none";
+
+db.ref("admins/" + currentUserId).once("value")
+.then((snap)=>{
+if(snap.exists()){
+document.getElementById("adminOpen").style.display = "inline-block";
+}
+});
 
 if(currentUserId === ownerId){
-
-document.getElementById("ownerOpen").style.display =
-"inline-block";
-
+document.getElementById("ownerOpen").style.display = "inline-block";
+document.getElementById("adminOpen").style.display = "inline-block";
 }
-
 </script>
 
 </body>

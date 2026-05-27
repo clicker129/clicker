@@ -616,7 +616,6 @@ return d;
 
 const time = new Date().toLocaleString();
 
-// запись тебе (отправка)
 db.ref("transactions/" + currentUserId).push({
 type: "send",
 to: targetId,
@@ -624,7 +623,6 @@ amount: amount,
 time: time
 });
 
-// запись получателю
 db.ref("transactions/" + targetId).push({
 type: "receive",
 from: currentUserId,
@@ -641,7 +639,8 @@ alert("✅ Перевод выполнен");
 document.getElementById("adminOpen").style.display = "none";
 document.getElementById("ownerOpen").style.display = "none";
 
-db.ref("admins/" + currentUserId).once("value
+
+db.ref("admins/" + currentUserId).once("value")
 .then((snap)=>{
 if(snap.exists()){
 document.getElementById("adminOpen").style.display = "inline-block";

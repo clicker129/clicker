@@ -436,10 +436,8 @@ alert("⭐ Уровень повышен");
 // ================= ADMIN =================
 
 function giveCoins(){
-
 const id =
 document.getElementById("adminId").value;
-
 const money =
 Number(document.getElementById("adminMoney").value);
 
@@ -449,23 +447,23 @@ return;
 }
 
 db.ref("players/" + id)
-.once("value")
-.then((snap)=>{
-
-const data = snap.val() || {
-balance:0,
+.transaction((data)=>{
+if(data === null){
+return {
+balance: money,
 level:1,
 power:1
 };
-
-data.balance += money;
-
-db.ref("players/" + id).set(data);
-
+}
+data.balance = (data.balance || 0) + money;
+return data;
+})
+.then(()=>{
 alert("✅ Монеты выданы");
-
+})
+.catch(()=>{
+alert("❌ Ошибка");
 });
-
 }
 
 function takeCoins(){

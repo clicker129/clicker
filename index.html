@@ -3,528 +3,513 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clicker RP NEON FULL</title>
+<title>Clicker RP FULL</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <style>
+
+*{
+box-sizing:border-box;
+}
+
 body{
 margin:0;
-font-family:Arial;
-background:url('https://images.unsplash.com/photo-1533134486753-c833f0ed4866?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+font-family:Arial,sans-serif;
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+background:
+linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),
+url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1920&auto=format&fit=crop');
+background-size:cover;
+background-position:center;
+overflow:hidden;
 }
 
 .main{
-background:rgba(0,0,0,0.75);
-backdrop-filter: blur(10px);
+width:95%;
+max-width:520px;
+background:rgba(15,15,15,.88);
+border-radius:25px;
 padding:25px;
-border-radius:20px;
 text-align:center;
 color:white;
-width:92%;
-max-width:550px;
-box-shadow:0 0 30px rgba(0,255,255,0.2);
+box-shadow:0 0 30px rgba(0,255,255,.25);
+backdrop-filter:blur(10px);
 }
 
-h1{color:white;text-shadow:0 0 10px cyan;}
-h2{color:#00ffd5;text-shadow:0 0 10px #00ffd5;}
-h3{color:#ccc;}
+h1{
+margin-top:0;
+font-size:32px;
+color:#00ffe5;
+text-shadow:0 0 15px #00ffe5;
+}
 
-button{
-margin:6px;
-padding:10px 15px;
+#score{
+font-size:48px;
+font-weight:bold;
+color:#00ff99;
+margin-top:10px;
+}
+
+#level{
+font-size:22px;
+margin-bottom:20px;
+color:#ddd;
+}
+
+.clickBtn{
+width:100%;
+padding:22px;
+font-size:34px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+font-weight:bold;
+background:linear-gradient(45deg,#00ffe5,#0066ff);
+color:white;
+box-shadow:0 0 25px rgba(0,255,255,.4);
+transition:.15s;
+}
+
+.clickBtn:active{
+transform:scale(.97);
+}
+
+.menuBtn{
+padding:12px 16px;
+margin:5px;
 border:none;
 border-radius:12px;
 cursor:pointer;
+font-size:16px;
 font-weight:bold;
-transition:0.2s;
+background:#222;
+color:white;
 }
 
-button:hover{transform:scale(1.05);}
+.adminBtn{
+background:#d62828;
+}
 
-.click{
-font-size:30px;
-width:100%;
-padding:18px;
-background:linear-gradient(45deg,#00ffd5,#0077ff);
+.ownerBtn{
+background:#ffb703;
 color:black;
-box-shadow:0 0 20px rgba(0,255,255,0.5);
 }
-
-.btn{background:#222;color:white;}
-.btn:hover{background:#333;}
-
-.admin{background:#ff2e2e;color:white;}
-.owner{background:#ffb300;color:black;}
 
 .panel{
+display:none;
+margin-top:15px;
 background:#111;
-padding:10px;
+padding:15px;
+border-radius:15px;
+border:1px solid #00ffe5;
+}
+
+.panel h3{
+margin-top:0;
+color:#00ffe5;
+}
+
+input{
+width:90%;
+padding:12px;
+margin:5px 0;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+.shopBtn{
+width:100%;
+margin-top:8px;
+padding:14px;
+font-size:18px;
+background:#1f2937;
+color:white;
+border:none;
 border-radius:12px;
-margin-top:10px;
-border:1px solid #00ffd5;
+cursor:pointer;
 }
 
-@media(min-width:900px){
-.main{max-width:750px;padding:40px;}
-.click{font-size:45px;}
+.shopBtn:hover{
+background:#374151;
 }
+
+.status{
+margin-top:15px;
+font-size:14px;
+color:#aaa;
+}
+
+@media(max-width:600px){
+
+body{
+align-items:flex-start;
+padding-top:20px;
+height:auto;
+min-height:100vh;
+}
+
+.main{
+margin-bottom:20px;
+}
+
+.clickBtn{
+font-size:28px;
+padding:20px;
+}
+
+}
+
 </style>
-
 </head>
-
 <body>
 
 <div class="main">
 
-<h1>💎 CLICKER RP FULL</h1>
+<h1>💎 CLICKER RP</h1>
 
-<h2 id="score">0</h2>
-<h3 id="level">Level: 1</h3>
+<div id="score">0</div>
+<div id="level">Level: 1</div>
 
-<button class="click" onclick="addClick()">💥 КЛИК</button>
+<button class="clickBtn" onclick="addClick()">💥 КЛИК</button>
 
 <br><br>
 
-<button class="btn" onclick="profile()">👤 Профиль</button>
-<button class="btn" onclick="toggleShop()">🛒 Магазин</button>
-<button class="admin" onclick="openAdmin()" id="adminBtn" style="display:none;">⚙️ Админ</button>
-<button class="owner" onclick="openOwner()" id="ownerBtn" style="display:none;">👑 OWNER</button>
+<button class="menuBtn" onclick="togglePanel('shop')">🛒 Магазин</button>
+
+<button class="menuBtn" onclick="profile()">👤 Профиль</button>
+
+<button id="adminOpen" class="menuBtn adminBtn" onclick="togglePanel('admin')">
+⚙️ Админ
+</button>
+
+<button id="ownerOpen" class="menuBtn ownerBtn" onclick="togglePanel('owner')">
+👑 Owner
+</button>
 
 <!-- SHOP -->
-<div id="shop" class="panel" style="display:none;">
+
+<div id="shop" class="panel">
+
 <h3>🛒 Магазин</h3>
-<button class="btn" onclick="buyPower()">⚡ +1 сила (100)</button>
-<button class="btn" onclick="buyLevel()">⭐ +1 уровень (200)</button>
+
+<button class="shopBtn" onclick="buyPower()">
+⚡ +1 Сила — 100
+</button>
+
+<button class="shopBtn" onclick="buyLevel()">
+⭐ +1 Уровень — 200
+</button>
+
 </div>
 
 <!-- ADMIN -->
-<div id="admin" class="panel" style="display:none;">
+
+<div id="admin" class="panel">
+
 <h3>⚙️ Админ панель</h3>
 
-<input id="id" placeholder="ID игрока" style="width:90%;padding:6px;"><br><br>
-<input id="money" placeholder="Монеты" style="width:90%;padding:6px;"><br><br>
+<input id="adminId" placeholder="ID игрока">
 
-<button class="btn" onclick="giveCoins()">➕ Выдать</button>
-<button class="btn" onclick="takeCoins()">➖ Забрать</button>
-<button class="admin" onclick="giveAdmin()">⚔️ Выдать админку</button>
+<input id="adminMoney" placeholder="Монеты">
+
+<button class="shopBtn" onclick="giveCoins()">
+➕ Выдать монеты
+</button>
+
+<button class="shopBtn" onclick="takeCoins()">
+➖ Забрать монеты
+</button>
+
+<button class="shopBtn" onclick="giveAdmin()">
+⚔️ Выдать админку
+</button>
+
 </div>
 
 <!-- OWNER -->
-<div id="owner" class="panel" style="display:none;">
-<h3>👑 OWNER ПАНЕЛЬ</h3>
 
-<input id="o_id" placeholder="ID игрока" style="width:90%;padding:6px;"><br><br>
-<input id="o_money" placeholder="Монеты" style="width:90%;padding:6px;"><br><br>
+<div id="owner" class="panel">
 
-<button class="owner" onclick="ownerGiveCoins()">💰 Выдать всем силу</button>
-<button class="owner" onclick="ownerReset()">🧨 Сброс игрока</button>
+<h3>👑 Owner панель</h3>
+
+<input id="ownerIdInput" placeholder="ID игрока">
+
+<button class="shopBtn" onclick="resetPlayer()">
+🧨 Сбросить игрока
+</button>
+
+</div>
+
+<div class="status" id="status">
+Загрузка...
 </div>
 
 </div>
 
 <script>
 
-// FIREBASE
+// ================= OWNER =================
+
+const ownerId = "7942212896";
+const currentUserId = "7942212896";
+
+// ================= FIREBASE =================
+
 const firebaseConfig = {
-apiKey: "AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",
-authDomain: "clickerrp.firebaseapp.com",
-databaseURL: "https://clickerrp-default-rtdb.firebaseio.com",
-projectId: "clickerrp",
-storageBucket: "clickerrp.firebasestorage.app",
-messagingSenderId: "610633308170",
-appId: "1:610633308170:web:e04a923c4bc6e0e05ca7f3"
+apiKey:"AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",
+authDomain:"clickerrp.firebaseapp.
+[27.05.2026 8:31] 🐊 Андрей 🐊: com",
+databaseURL:"https://clickerrp-default-rtdb.firebaseio.com",
+projectId:"clickerrp",
+storageBucket:"clickerrp.firebasestorage.app",
+messagingSenderId:"610633308170",
+appId:"1:610633308170:web:e04a923c4bc6e0e05ca7f3"
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.database();
 
-// OWNER ID
-const ownerId = "7942212896";
-let currentUserId = "7942212896";
+// ================= DATA =================
 
-// DATA
 let score = 0;
 let level = 1;
 let power = 1;
 
-// LOAD PLAYER
-db.ref("players/"+currentUserId).on("value", snap=>{
-let d = snap.val() || {balance:0,level:1,power:1};
+// ================= UI =================
 
-score = d.balance;
-level = d.level;
-power = d.power;
+function updateUI(){
 
-document.getElementById("score").innerText = "💰 " + score;
-document.getElementById("level").innerText = "Level: " + level;
+document.getElementById("score").innerText = score;
+
+document.getElementById("level").innerText =
+"Level: " + level;
+
+}
+
+// ================= LOAD =================
+
+function loadData(){
+
+db.ref("players/"+currentUserId)
+.once("value")
+.then((snap)=>{
+
+const data = snap.val();
+
+if(data){
+
+score = data.balance || 0;
+level = data.level || 1;
+power = data.power || 1;
+
+}
+
+updateUI();
+
+document.getElementById("status").innerText =
+"✅ Firebase подключен";
+
+})
+.catch(()=>{
+
+document.getElementById("status").innerText =
+"⚠️ Firebase ошибка";
+
 });
 
-// CLICK
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clicker RP NEON FULL</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:url('https://images.unsplash.com/photo-1533134486753-c833f0ed4866?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
 }
 
-.main{
-background:rgba(0,0,0,0.75);
-backdrop-filter: blur(10px);
-padding:25px;
-border-radius:20px;
-text-align:center;
-color:white;
-width:92%;
-max-width:550px;
-box-shadow:0 0 30px rgba(0,255,255,0.2);
-}
+loadData();
 
-h1{color:white;text-shadow:0 0 10px cyan;}
-h2{color:#00ffd5;text-shadow:0 0 10px #00ffd5;}
-h3{color:#ccc;}
+// ================= SAVE =================
 
-button{
-margin:6px;
-padding:10px 15px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-font-weight:bold;
-transition:0.2s;
-}
+function saveData(){
 
-button:hover{transform:scale(1.05);}
-
-.click{
-font-size:30px;
-width:100%;
-padding:18px;
-background:linear-gradient(45deg,#00ffd5,#0077ff);
-color:black;
-box-shadow:0 0 20px rgba(0,255,255,0.5);
-}
-
-.btn{background:#222;color:white;}
-.btn:hover{background:#333;}
-
-.admin{background:#ff2e2e;color:white;}
-.owner{background:#ffb300;color:black;}
-
-.panel{
-background:#111;
-padding:10px;
-border-radius:12px;
-margin-top:10px;
-border:1px solid #00ffd5;
-}
-
-@media(min-width:900px){
-.main{max-width:750px;padding:40px;}
-.click{font-size:45px;}
-}
-</style>
-
-</head>
-
-<body>
-
-<div class="main">
-
-<h1>💎 CLICKER RP FULL</h1>
-
-<h2 id="score">0</h2>
-<h3 id="level">Level: 1</h3>
-
-<button class="click" onclick="addClick()">💥 КЛИК</button>
-
-<br><br>
-
-<button class="btn" onclick="profile()">👤 Профиль</button>
-<button class="btn" onclick="toggleShop()">🛒 Магазин</button>
-<button class="admin" onclick="openAdmin()" id="adminBtn" style="display:none;">⚙️ Админ</button>
-<button class="owner" onclick="openOwner()" id="ownerBtn" style="display:none;">👑 OWNER</button>
-
-<!-- SHOP -->
-<div id="shop" class="panel" style="display:none;">
-<h3>🛒 Магазин</h3>
-<button class="btn" onclick="buyPower()">⚡ +1 сила (100)</button>
-<button class="btn" onclick="buyLevel()">⭐ +1 уровень (200)</button>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="panel" style="display:none;">
-<h3>⚙️ Админ панель</h3>
-
-<input id="id" placeholder="ID игрока" style="width:90%;padding:6px;"><br><br>
-<input id="money" placeholder="Монеты" style="width:90%;padding:6px;"><br><br>
-
-<button class="btn" onclick="giveCoins()">➕ Выдать</button>
-<button class="btn" onclick="takeCoins()">➖ Забрать</button>
-<button class="admin" onclick="giveAdmin()">⚔️ Выдать админку</button>
-</div>
-
-<!-- OWNER -->
-<div id="owner" class="panel" style="display:none;">
-<h3>👑 OWNER ПАНЕЛЬ</h3>
-
-<input id="o_id" placeholder="ID игрока" style="width:90%;padding:6px;"><br><br>
-<input id="o_money" placeholder="Монеты" style="width:90%;padding:6px;"><br><br>
-
-<button class="owner" onclick="ownerGiveCoins()">💰 Выдать всем силу</button>
-<button class="owner" onclick="ownerReset()">🧨 Сброс игрока</button>
-</div>
-
-</div>
-
-<script>
-
-// FIREBASE
-const firebaseConfig = {
-apiKey: "AIzaSyD5KhZGttltxrkP3yNpe4joE9R6SuGw0Co",
-authDomain: "clickerrp.firebaseapp.com",
-databaseURL: "https://clickerrp-default-rtdb.firebaseio.com",
-projectId: "clickerrp",
-storageBucket: "clickerrp.firebasestorage.app",
-messagingSenderId: "610633308170",
-appId: "1:610633308170:web:e04a923c4bc6e0e05ca7f3"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// OWNER ID
-const ownerId = "7942212896";
-let currentUserId = "7942212896";
-
-// DATA
-let score = 0;
-let level = 1;
-let power = 1;
-
-// LOAD PLAYER
-db.ref("players/"+currentUserId).on("value", snap=>{
-let d = snap.val() || {balance:0,level:1,power:1};
-
-score = d.balance;
-level = d.level;
-power = d.power;
-
-document.getElementById("score").innerText = "💰 " + score;
-document.getElementById("level").innerText = "Level: " + level;
-});
-
-// CLICK
-function addClick(){
-score += power;
-save();
-}
-
-// SAVE
-function save(){
 db.ref("players/"+currentUserId).set({
 balance:score,
 level:level,
 power:power
 });
+
+updateUI();
+
 }
 
-// PROFILE
+// ================= CLICK =================
+
+function addClick(){
+
+score += power;
+
+saveData();
+
+}
+
+// ================= PROFILE =================
+
 function profile(){
+
 alert(
 "🆔 ID: "+currentUserId+
 "\n💰 Баланс: "+score+
-"\n⭐ Level: "+level+
+"\n⭐ Уровень: "+level+
 "\n⚡ Сила: "+power
 );
+
 }
 
-// SHOP
-function toggleShop(){
-let s=document.getElementById("shop");
+// ================= PANELS =================
 
-if(s.style.display==="none"){
-s.style.display="block";
+function togglePanel(id){
+
+const panel = document.getElementById(id);
+
+if(panel.style.display === "block"){
+panel.style.display = "none";
 }else{
-s.style.display="none";
+panel.style.display = "block";
 }
+
 }
+
+// ================= SHOP =================
 
 function buyPower(){
 
 if(score < 100){
-alert("Недостаточно монет");
+alert("❌ Недостаточно монет");
 return;
 }
 
 score -= 100;
 power++;
-save();
 
-alert("⚡ Сила увеличена");
+saveData();
+
+alert("⚡ Сила улучшена");
+
 }
 
 function buyLevel(){
 
 if(score < 200){
-alert("Недостаточно монет");
+alert("❌ Недостаточно монет");
 return;
 }
 
 score -= 200;
 level++;
-save();
+
+saveData();
 
 alert("⭐ Уровень повышен");
+
 }
 
-// ADMIN
-function openAdmin(){
-
-let panel=document.getElementById("admin");
-
-if(panel.style.display==="none"){
-panel.style.display="block";
-}else{
-panel.style.display="none";
-}
-}
+// ================= ADMIN =================
 
 function giveCoins(){
 
-let id=document.getElementById("id").value;
-let money=Number(document.getElementById("money").value);
+const id =
+document.getElementById("adminId").value;
+
+const money =
+Number(document.getElementById("adminMoney").value);
 
 if(!id || !money){
-alert("Заполни поля");
+alert("❌ Заполни поля");
 return;
 }
 
-db.ref("players/"+id).once("value", snap=>{
+db.ref("players/"+id)
+.once("value")
+.then((snap)=>{
 
-let d=snap.val()||{
+const data = snap.val() || {
 balance:0,
 level:1,
 power:1
 };
 
-d.balance += money;
+data.balance += money;
 
-db.ref("players/"+id).set(d);
+db.ref("players/"+id).set(data);
 
-alert("💰 Монеты выданы");
+alert("✅ Монеты выданы");
 
 });
+
 }
 
 function takeCoins(){
 
-let id=document.getElementById("id").value;
-let money=Number(document.getElementById("money").value);
+const id =
+document.getElementById("adminId").value;
+
+const money =
+Number(document.getElementById("adminMoney").value);
 
 if(!id || !money){
-alert("Заполни поля");
+alert("❌ Заполни поля");
 return;
 }
 
-db.ref("players/"+id).once("value", snap=>{
+db.ref("players/"+id)
+.once("value")
+.then((snap)=>{
 
-let d=snap.val()||{
+const data = snap.val() || {
 balance:0,
 level:1,
 power:1
 };
 
-d.balance -= money;
+data.balance -= money;
 
-if(d.balance < 0){
-d.balance = 0;
+if(data.balance < 0){
+data.balance = 0;
 }
 
-db.ref("players/"+id).set(d);
+db.ref("players/"+id).set(data);
 
-alert("➖ Монеты забраны");
+alert("✅ Монеты забраны");
 
 });
+
 }
 
 function giveAdmin(){
 
-let id=document.getElementById("id").value;
+const id =
+document.getElementById("adminId").value;
 
 if(!id){
-alert("Введите ID");
+alert("❌ Введите ID");
 return;
 }
 
 db.ref("admins/"+id).set(true);
 
 alert("⚔️ Админка выдана");
+
 }
 
-// OWNER
-function openOwner(){
+// ================= OWNER =================
 
-let panel=document.getElementById("owner");
+function resetPlayer(){
 
-if(panel.style.display==="none"){
-panel.style.display="block";
-}else{
-panel.style.display="none";
-}
-}
-
-function ownerGiveCoins(){
-
-let id=document.getElementById("o_id").value;
+const id =
+document.getElementById("ownerIdInput").value;
 
 if(!id){
-alert("Введите ID");
-return;
-}
-
-db.ref("players/"+id).once("value", snap=>{
-
-let d=snap.val()||{
-balance:0,
-level:1,
-power:1
-};
-
-d.power += 10;
-
-db.ref("players/"+id).set(d);
-
-alert("⚡ Игроку выдана сила");
-
-});
-}
-
-function ownerReset(){
-
-let id=document.getElementById("o_id").value;
-
-if(!id){
-alert("Введите ID");
+alert("❌ Введите ID");
 return;
 }
 
@@ -535,29 +520,20 @@ power:1
 });
 
 alert("🧨 Игрок сброшен");
-}
-
-// CHECK ROLES
-function checkRoles(){
-
-db.ref("admins/"+currentUserId).once("value", snap=>{
-
-if(
-currentUserId===ownerId ||
-snap.val()===true
-){
-document.getElementById("adminBtn").style.display="inline-block";
-}
-
-});
-
-if(currentUserId===ownerId){
-document.getElementById("ownerBtn").style.display="inline-block";
-}
 
 }
 
-checkRoles();
+// ================= ROLES =================
+
+document.getElementById("adminOpen").style.display =
+"inline-block";
+
+if(currentUserId === ownerId){
+
+document.getElementById("ownerOpen").style.display =
+"inline-block";
+
+}
 
 </script>
 
